@@ -29,5 +29,16 @@ spring:
       multipart:
         max-request-size: 2MB
 
+#oauth configs
+user:
+  oauth:
+    clientId: demo
+    clientSecret: 123456
+    redirectUris: http://localhost:8089/login
+    username: user1
+    password: pass1
+    accessTokenValidity: 300
+    refreshTokenValidity: 240000
+
 
 

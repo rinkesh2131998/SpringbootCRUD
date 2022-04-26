@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/csv")
+@RequestMapping("/api/csv")
 public class CsvController {
   private final CsvService csvService;
 
