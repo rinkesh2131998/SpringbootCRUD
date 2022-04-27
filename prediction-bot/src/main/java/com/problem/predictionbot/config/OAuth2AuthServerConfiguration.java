@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -15,16 +16,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
  * oauth server.
  */
 @Slf4j
-@RequiredArgsConstructor
 @Configuration
 @EnableAuthorizationServer
-@ConfigurationProperties(prefix = "user.oauth")
+@RequiredArgsConstructor
 public class OAuth2AuthServerConfiguration extends AuthorizationServerConfigurerAdapter {
-  private final String clientId;
-  private final String clientSecret;
-  private final String redirectUris;
-  private final int accessTokenValidity;
-  private final int refreshTokenValidity;
+
+  private final OAuth2Properties properties;
+
   private final BCryptPasswordEncoder passwordEncoder;
 
   @Override
@@ -36,13 +34,13 @@ public class OAuth2AuthServerConfiguration extends AuthorizationServerConfigurer
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
     clients
         .inMemory()
-        .withClient(clientId)
-        .secret(passwordEncoder.encode(clientSecret))
+        .withClient(properties.getClientId())
         .authorizedGrantTypes("password", "authorization_code", "refresh_token")
+        .secret(passwordEncoder.encode(properties.getClientSecret()))
         .scopes("user info")
         .authorities("READ_ONLY_CLIENT")
-        .redirectUris(redirectUris)
-        .accessTokenValiditySeconds(accessTokenValidity)
-        .refreshTokenValiditySeconds(refreshTokenValidity);
+        .redirectUris(properties.getRedirectUris())
+        .accessTokenValiditySeconds(properties.getAccessTokenValidity())
+        .refreshTokenValiditySeconds(properties.getRefreshTokenValidity());
   }
 }
